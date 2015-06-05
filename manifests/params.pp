@@ -9,6 +9,7 @@ class authconfig::params () {
   }
   $krb5_packages      = ['pam_krb5', 'krb5-workstation']
   $mkhomedir_packages = $::operatingsystemmajrelease ? {
+    2015    => ['pam'],
     5       => ['pam'],
     default => ['oddjob-mkhomedir']
   }
