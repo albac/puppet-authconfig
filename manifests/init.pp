@@ -141,6 +141,9 @@ class authconfig (
   $fingerprint    = false,
   $winbind        = false,
   $winbindauth    = false,
+  $winbindusedefaultdomain = false,
+  $winbindtemplatehomedir = undef,
+  $winbindtemplateshell = undef,
   $smbsecurity    = 'ads',
   $smbrealm       = undef,
   $smbworkgroup   = undef,
@@ -313,6 +316,18 @@ class authconfig (
           fail('The winbindjoin parameter is required when winbind is set to true')
         }
 
+        if !$winbindusedefaultdomain {
+          fail('The winbindusedefaultdomain parameter is required when winbind is set to true')
+        }
+
+        if !$winbindtemplatehomedir {
+          fail('The winbindtemplatehomedir parameter is required when winbind is set to true')
+        }
+
+        if !$winbindtemplateshell {
+          fail('The winbindtemplateshell parameter is required when winbind is set to true')
+        }
+
         if !$smbservers {
           fail('The smbservers parameter is required when winbind is set to true')
         }
@@ -326,6 +341,19 @@ class authconfig (
       $winbindauth_flg = $winbindauth ? {
         true    => '--enablewinbindauth',
         default => '--disablewinbindauth',
+      }
+
+      $winbindusedefaultdomain_flg = $winbindusedefaultdomain ? {
+        true    => '--enablewinbindusedefaultdomain',
+        default => '--disablewinbindusedefaultdomain',
+      }
+
+      if $winbindtemplatehomedir {
+        $winbindtemplatehomedir_val = "--winbindtemplatehomedir=${winbindtemplatehomedir}"
+      }
+
+      if $winbindtemplateshell {
+        $winbindtemplateshell_val = "--winbindtemplateshell=${winbindtemplateshell}"
       }
 
       if $smbsecurity {
@@ -418,7 +446,7 @@ class authconfig (
       }
 
       $winbind_flags = $winbind ? {
-        true    => "${winbind_flg} ${winbindauth_flg} ${smbsecurity_val} ${smbrealm_val} ${smbworkgroup_val} ${winbindjoin_val} ${smbservers_val}",
+        true    => "${winbind_flg} ${winbindauth_flg} ${winbindusedefaultdomain_flg} ${winbindtemplatehomedir_val} ${winbindtemplateshell_val} ${smbsecurity_val} ${smbrealm_val} ${smbworkgroup_val} ${winbindjoin_val} ${smbservers_val}",
         default => '',
       }
 
